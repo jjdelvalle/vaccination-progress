@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import logging
 from datetime import datetime, timedelta
 
 import tweepy
@@ -10,6 +11,22 @@ DATA_SOURCE = "https://raw.githubusercontent.com/owid/covid-19-data/master/publi
 BAR_CHARS = 16
 # People over 20 years old (according to census data (2018))
 VAX_POP = 8244536
+
+def logging_setup():
+    logging.basicConfig(filename='bot.log', level=logging.INFO, format='%(asctime)s %(message)s')
+    return
+
+def should_tweet():
+    final_line = None
+    with open("bot.log", "r") as log_file:
+        for line in log_file:
+            final_line = line
+            pass
+    if final_line is None:
+        return True
+
+    final_date = datetime.strptime(final_line[:10], '%Y-%m-%d')
+    return datetime.now().replace(hour=0, minute=0, second=0, microsecond=0) > final_date
 
 # From https://github.com/imbstt/impf-progress-bot/blob/master/bot.py
 def generate_bar(percentage, n_chars = None):
@@ -52,6 +69,7 @@ def get_estimated_herd(df: pd.DataFrame, by: float = .75):
     return estimated_date.strftime("%b %Y")
 
 def main(dry_run):
+    logging_setup()
     df = get_data()
     partial_vax = generate_bar(df['people_vaccinated'].values[0] / VAX_POP)
     full_vax = generate_bar(df['people_fully_vaccinated'].values[0] / VAX_POP)
@@ -64,8 +82,11 @@ def main(dry_run):
 
     if dry_run:
         print(tweet)
+        print(f"Should it be tweeted? -- {should_tweet()}")
         return
-    twitter_api.update_status(tweet)
+    if should_tweet():
+        twitter_api.update_status(tweet)
+        logging.info('Tweet out')
     return
 
 if __name__ == '__main__':
