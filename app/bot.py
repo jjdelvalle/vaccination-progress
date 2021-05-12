@@ -39,9 +39,15 @@ def get_auth():
 
     return auth
 
-def get_estimated_herd(df: pd.DataFrame, by=.75):
+def get_estimated_herd(df: pd.DataFrame, by: float = .75):
+    """Return the estimated date to reach herd immunity
+
+        Keyword arguments:
+        df -- A dataframe of 1 row with the necessary information to calculate the date
+        by -- A float that represents at what percentage of the population herd immunity is reached
+    """
     daily_vaccs = df['daily_vaccinations'].values[0]
-    days_left = (VAX_POP - df['people_fully_vaccinated'].values[0]) * by * 2 / daily_vaccs
+    days_left = ((VAX_POP * by - df['people_vaccinated'].values[0] - df['people_fully_vaccinated'].values[0]) * 2 + df['people_vaccinated'].values[0]) // daily_vaccs
     estimated_date = datetime.now() + days_left * timedelta(days=1)
     return estimated_date.strftime("%b %Y")
 
