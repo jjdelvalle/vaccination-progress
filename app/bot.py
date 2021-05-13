@@ -7,6 +7,8 @@ from datetime import datetime, timedelta
 import tweepy
 import pandas as pd
 
+from months import MONTHS_DICT
+
 DATA_SOURCE = "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/vaccinations.csv"
 BAR_CHARS = 16
 # People over 20 years old (according to census data (2018))
@@ -16,7 +18,7 @@ def logging_setup():
     logging.basicConfig(filename='bot.log', level=logging.INFO, format='%(asctime)s %(message)s')
     return
 
-def should_tweet():
+def should_tweet(df):
     final_line = None
     with open("bot.log", "r") as log_file:
         for line in log_file:
@@ -26,7 +28,7 @@ def should_tweet():
         return True
 
     final_date = datetime.strptime(final_line[:10], '%Y-%m-%d')
-    return datetime.now().replace(hour=0, minute=0, second=0, microsecond=0) > final_date
+    return (df['date'] > final_date).any()
 
 # From https://github.com/imbstt/impf-progress-bot/blob/master/bot.py
 def generate_bar(percentage, n_chars = None):
@@ -40,7 +42,8 @@ def generate_bar(percentage, n_chars = None):
 
 def get_data():
     df = pd.read_csv(DATA_SOURCE)
-    df = df.query("iso_code == 'GTM'")
+    df = df.query("iso_code == 'GTM'").copy()
+    df['date'] = pd.to_datetime(df['date'])
     return df.tail(1)
 
 def get_auth():
@@ -66,7 +69,12 @@ def get_estimated_herd(df: pd.DataFrame, by: float = .75):
     daily_vaccs = df['daily_vaccinations'].values[0]
     days_left = ((VAX_POP * by - df['people_vaccinated'].values[0] - df['people_fully_vaccinated'].values[0]) * 2 + df['people_vaccinated'].values[0]) // daily_vaccs
     estimated_date = datetime.now() + days_left * timedelta(days=1)
-    return estimated_date.strftime("%b %Y")
+    est_str = estimated_date.strftime("%b %Y")
+    month_str = est_str[:3]
+
+    # Modify month string without having to resort to changing locale
+    est_str = est_str.replace(month_str, MONTHS_DICT.get(month_str, month_str))
+    return est_str
 
 def main(dry_run):
     logging_setup()
@@ -82,9 +90,9 @@ def main(dry_run):
 
     if dry_run:
         print(tweet)
-        print(f"Should it be tweeted? -- {should_tweet()}")
+        print(f"Should it be tweeted? -- {should_tweet(df)}")
         return
-    if should_tweet():
+    if should_tweet(df):
         twitter_api.update_status(tweet)
         logging.info('Tweet out')
     return
