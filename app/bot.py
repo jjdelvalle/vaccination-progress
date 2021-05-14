@@ -16,12 +16,12 @@ BAR_CHARS = 16
 VAX_POP = 8244536
 
 def logging_setup():
-    logging.basicConfig(filename='bot.log', level=logging.INFO, format='%(message)s')
+    logging.basicConfig(filename='logs/bot.log', level=logging.INFO, format='%(message)s')
     return
 
 def should_tweet(df):
     final_line = None
-    with open("bot.log", "r") as log_file:
+    with open("logs/bot.log", "r") as log_file:
         for line in log_file:
             final_line = line
             pass
