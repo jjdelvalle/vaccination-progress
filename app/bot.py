@@ -5,6 +5,7 @@ import logging
 from datetime import datetime, timedelta
 
 import tweepy
+import numpy as np
 import pandas as pd
 
 from months import MONTHS_DICT
@@ -15,7 +16,7 @@ BAR_CHARS = 16
 VAX_POP = 8244536
 
 def logging_setup():
-    logging.basicConfig(filename='bot.log', level=logging.INFO, format='%(asctime)s %(message)s')
+    logging.basicConfig(filename='bot.log', level=logging.INFO, format='%(message)s')
     return
 
 def should_tweet(df):
@@ -94,7 +95,9 @@ def main(dry_run):
         return
     if should_tweet(df):
         twitter_api.update_status(tweet)
-        logging.info('Tweet out')
+        last_date = df['date'].values[0]
+        ts = (last_date - np.datetime64('1970-01-01T00:00:00')) / np.timedelta64(1, 's')
+        logging.info(f'{datetime.utcfromtimestamp(ts)} Tweet out')
     return
 
 if __name__ == '__main__':
