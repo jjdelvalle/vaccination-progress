@@ -1,7 +1,7 @@
 # Progreso de vacunación en Guatemala
 
 Este proyecto no está asociado de ninguna forma con el MSPAS, OWID, o ninguna institución oficial.
-El proyecto fue desarrollado en el tiempo libre de [@jjdelvalle](https://github.com/jjdelvalle).
+El proyecto fue desarrollado en [mi](https://github.com/jjdelvalle) tiempo libre ([@imaginarytl](https://twitter.com/imaginarytl) en Twitter).
 El proyecto se desarrolló bajo la licencia MIT.
 
 El bot revisara los datos constantemente durante el día entre las 8 y 20 horas, lo cual significa que generalmente los tuits de actualización serán enviados a las 8 de la mañana.
@@ -52,7 +52,7 @@ En el caso de Guatemala, en donde los periodos de vacunación son irregulares y 
 Esto resultará en tener un estimado bastante optimista después de un periodo corto de vacunación activa.
 También resultará en un estimado bastante pesimista en periodos en donde la oferta de vacunas es muy baja.
 
-Es probable que este cálculo se modifique en un futuro para tomar en cuenta la situación específica de Guatemala y su oferta de vacunas esprádica.
+Es probable que este cálculo se modifique en un futuro para tomar en cuenta la situación específica de Guatemala y su oferta de vacunas esporádica.
 
 ## Notas aclaratorias
 
