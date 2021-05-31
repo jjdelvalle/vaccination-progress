@@ -12,8 +12,11 @@ from months import MONTHS_DICT
 
 DATA_SOURCE = "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/vaccinations.csv"
 BAR_CHARS = 16
-# People over 20 years old (according to census data (2018))
-VAX_POP = 8244536
+# People over 12 years old (according to INE projected data for 2021)
+# NOTE: This number is still below the 75% threshold for herd immunity
+# It represents only ~71% of the population
+TOTAL_POP = 17109746
+VAX_POP = 12293144
 
 def logging_setup():
     logging.basicConfig(filename='logs/bot.log', level=logging.INFO, format='%(message)s')
@@ -68,7 +71,7 @@ def get_estimated_herd(df: pd.DataFrame, by: float = .75):
         by -- A float that represents at what percentage of the population herd immunity is reached
     """
     daily_vaccs = df['daily_vaccinations'].values[0]
-    days_left = ((VAX_POP * by - df['people_vaccinated'].values[0] - df['people_fully_vaccinated'].values[0]) * 2 + df['people_vaccinated'].values[0]) // daily_vaccs
+    days_left = ((TOTAL_POP * by - df['people_vaccinated'].values[0] - df['people_fully_vaccinated'].values[0]) * 2 + df['people_vaccinated'].values[0]) // daily_vaccs
     estimated_date = datetime.now() + days_left * timedelta(days=1)
     est_str = estimated_date.strftime("%b %Y")
     month_str = est_str[:3]
