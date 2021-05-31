@@ -1,6 +1,8 @@
 # Progreso de vacunación en Guatemala
 
-Este proyecto no está asociado de ninguna forma con el MSPAS, OWID, o ninguna institución oficial. El proyecto fue desarrollado en el tiempo libre de [@jjdelvalle](https://github.com/jjdelvalle). El proyecto se desarrolló bajo la licencia MIT.
+Este proyecto no está asociado de ninguna forma con el MSPAS, OWID, o ninguna institución oficial.
+El proyecto fue desarrollado en el tiempo libre de [@jjdelvalle](https://github.com/jjdelvalle).
+El proyecto se desarrolló bajo la licencia MIT.
 
 El bot revisara los datos constantemente durante el día entre las 8 y 20 horas, lo cual significa que generalmente los tuits de actualización serán enviados a las 8 de la mañana.
 
@@ -13,8 +15,13 @@ Los datos son obtenidos de la siguiente fuente:
 Esto se hace por conveniencia ya que se ofrecen los ultimos datos de vacunación en un archivo `csv`, el cual es más fácilmente digerible.
 Los datos de OWID son alimentados directamente por MSPAS. En efecto, las cifras reportadas acá son las cifras oficiales presentadas por las autoridades.
 
-Adicionalmente, se utiliza una cifra de 8,244,536 personas para el cálculo de porcentajes y proyecciones de inmunidad de rebaño.
-Esta cifra representa a toda persona mayor a 20 años según el [censo poblacional 2018](https://www.censopoblacion.gt/graficas).
+Adicionalmente, se utiliza una cifra de 12,293,144 personas para el cálculo de porcentajes.
+Esta cifra representa a toda persona mayor a 12 años según [proyecciones del INE](https://www.ine.gob.gt/ine/proyecciones/) al año 2021 basadas en el [censo poblacional 2018](https://www.censopoblacion.gt/graficas).
+Ya que Guatemala es un país muy joven, vacunar solamente a los adultos mayores de edad no es suficiente para alcanzar una inmunidad de rebaño.
+La población abajo de 18 años representa casi el 40% de la población entera del país por lo que no se puede ignorar en el proceso de vacunación.
+
+La vacuna de Pfizer/BioNTech reporta ser [efectiva y segura para niños mayores de 12 años](https://www.pfizer.com/news/press-release/press-release-detail/pfizer-biontech-announce-positive-topline-results-pivotal).
+Esta vacuna, y próximas vacunas que sean demostradas seguras para niños y niñas, serán necesarias para países jóvenes como Guatemala.
 
 ## Cálculos
 
@@ -23,6 +30,18 @@ Esta cifra representa a toda persona mayor a 20 años según el [censo poblacion
 No existe un consenso científico de un porcentaje necesario para llegar a inmunidad de rebaño.
 Sin embargo, algunos expertos sugieren un porcentaje entre 60 y 70, y [otros hasta un porcentaje de 85%](https://www.cnbc.com/2020/12/16/cnbc-transcript-dr-anthony-fauci-speaks-with-cnbcs-meg-tirrell-live-during-the-cnbc-healthy-returns-livestream-today.html).
 Debido a esto, el estimado para la inmunidad resulta ser bastante conservador al elegir un numero como 75%.
+Este es el porcentaje utilizado para la estimación.
+Así mismo, este se deberá aplicar sobre la cifra *total* poblacional, no solo sobre la población que se podrá vacunar.
+Esto significa que la cifra meta para la inmunidad de rebaño es de 12.9M de personas.
+
+El cálculo resulta siendo entonces `(POBLACIÓN META - vacunados) * 2 / vacunas diarias`.
+
+Esto es correcto bajo las siguientes suposiciones:
+
+1. Los números de vacunación reportados son correctos
+1. Una meta del 75% para la inmunidad de rebaño
+1. La población recibirá dos dosis antes de completar el esquema de vacunación y
+1. El ritmo de los últimos días se mantendrá
 
 ### Número de vacunas al día
 
@@ -38,9 +57,15 @@ Es probable que este cálculo se modifique en un futuro para tomar en cuenta la 
 ## Notas aclaratorias
 
 * Los cálculos no toman en cuenta que al transcurrir los años más gente será elegible para obtener la vacuna y se deberán tomar en cuenta para el total de población a vacunar.
-* La población total que se está considerando son adultos mayores a 20 años. Sin embargo algunas vacunas ya están siendo aprobadas para ser aplicadas en personas mayores de 16 o incluso de 12 años.
+* La población total que se está considerando son adultos mayores a 12 años. Esto implica la importación de vacunas seguras para niños.
 
 ## Librerías utilizadas
 
 * `pandas`
+* `numpy`
 * `tweepy`
+
+## Agradecimientos
+
+Gracias al Laboratorio de Datos ([@labdatosgt](https://twitter.com/labdatosgt)) por compartir su metodología al calcular estimados de vacunación y fuentes de datos.
+
