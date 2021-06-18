@@ -4,7 +4,7 @@ Este proyecto no está asociado de ninguna forma con el MSPAS, OWID, o ninguna i
 El proyecto fue desarrollado en [mi](https://github.com/jjdelvalle) tiempo libre ([@imaginarytl](https://twitter.com/imaginarytl) en Twitter).
 El proyecto se desarrolló bajo la licencia MIT.
 
-El bot revisara los datos constantemente durante el día entre las 8 y 20 horas, lo cual significa que generalmente los tuits de actualización serán enviados a las 8 de la mañana.
+El bot revisara los datos constantemente durante el día entre las 11 y 20 horas, lo cual significa que generalmente los tuits de actualización serán enviados a las 8 de la mañana.
 
 ## Fuente de datos
 
@@ -46,7 +46,8 @@ Esto es correcto bajo las siguientes suposiciones:
 ### Número de vacunas al día
 
 Los datos calculados por OWID proveen un promedio de vacunas diarias administradas según los datos de los días más recientes.
-Este número se utilizar para calcular la fecha estimada para la inmunidad.
+Este numero corresponde a un promedio de la ultima semana.
+Sin embargo, en Guatemala este numero oscila mucho, por lo que la fecha estimada para la inmunidad se calculara usando un promedio de los ultimos 14 dias.
 La ventaja de esto es que nos permite controlar un poco la variabilidad que se tiene en un día a día y funciona muy bien en países en donde la oferta de vacunas es relativamente constante.
 En el caso de Guatemala, en donde los periodos de vacunación son irregulares y la oferta de vacunas no es constante, este número no resulta ser tan estable para este tipo de cálculo.
 Esto resultará en tener un estimado bastante optimista después de un periodo corto de vacunación activa.
