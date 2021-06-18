@@ -48,7 +48,7 @@ def get_data():
     df = pd.read_csv(DATA_SOURCE)
     df = df.query("iso_code == 'GTM'").copy()
     df['date'] = pd.to_datetime(df['date'])
-    return df.tail(1)
+    return df.tail(14)
 
 def get_auth():
     with open("config.json", "r") as json_data_file:
@@ -70,7 +70,8 @@ def get_estimated_herd(df: pd.DataFrame, by: float = .75):
         df -- A dataframe of 1 row with the necessary information to calculate the date
         by -- A float that represents at what percentage of the population herd immunity is reached
     """
-    daily_vaccs = df['daily_vaccinations'].values[0]
+    daily_vaccs = df['daily_vaccinations'].mean()
+    df = df.tail(1)
     days_left = ((TOTAL_POP * by - df['people_vaccinated'].values[0] - df['people_fully_vaccinated'].values[0]) * 2 + df['people_vaccinated'].values[0]) // daily_vaccs
     estimated_date = datetime.now() + days_left * timedelta(days=1)
     est_str = estimated_date.strftime("%b %Y")
@@ -83,8 +84,8 @@ def get_estimated_herd(df: pd.DataFrame, by: float = .75):
 def main(dry_run):
     logging_setup()
     df = get_data()
-    partial_vax = generate_bar(df['people_vaccinated'].values[0] / VAX_POP)
-    full_vax = generate_bar(df['people_fully_vaccinated'].values[0] / VAX_POP)
+    partial_vax = generate_bar(df['people_vaccinated'].values[-1] / VAX_POP)
+    full_vax = generate_bar(df['people_fully_vaccinated'].values[-1] / VAX_POP)
     estimated_herd = get_estimated_herd(df)
 
     tweet = f"{partial_vax} parc. vacunados\n{full_vax} comp. vacunados\nInmunidad de rebaño (al 75%): {estimated_herd}"
