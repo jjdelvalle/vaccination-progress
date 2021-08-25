@@ -11,7 +11,7 @@ import pandas as pd
 from months import MONTHS_DICT
 
 DATA_SOURCE = "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/vaccinations.csv"
-BAR_CHARS = 16
+BAR_CHARS = 18
 # People over 12 years old (according to INE projected data for 2021)
 # NOTE: This number is still below the 75% threshold for herd immunity
 # It represents only ~71% of the population
@@ -32,7 +32,8 @@ def should_tweet(df):
         return True
 
     final_date = datetime.strptime(final_line[:10], '%Y-%m-%d')
-    return (df['date'] > final_date).any()
+    print(final_date, df['date'].values[-1])
+    return (df.tail(1)['date'] > final_date).any()
 
 # From https://github.com/imbstt/impf-progress-bot/blob/master/bot.py
 def generate_bar(percentage, n_chars = None):
@@ -72,7 +73,7 @@ def get_estimated_herd(df: pd.DataFrame, by: float = .75):
     """
     daily_vaccs = df['daily_vaccinations'].mean()
     df = df.tail(1)
-    days_left = ((TOTAL_POP * by - df['people_vaccinated'].values[0] - df['people_fully_vaccinated'].values[0]) * 2 + df['people_vaccinated'].values[0]) // daily_vaccs
+    days_left = ((VAX_POP - df['people_vaccinated'].values[0] - df['people_fully_vaccinated'].values[0]) * 2 + df['people_vaccinated'].values[0]) // daily_vaccs
     estimated_date = datetime.now() + days_left * timedelta(days=1)
     est_str = estimated_date.strftime("%b %Y")
     month_str = est_str[:3]
@@ -88,7 +89,7 @@ def main(dry_run):
     full_vax = generate_bar(df['people_fully_vaccinated'].values[-1] / VAX_POP)
     estimated_herd = get_estimated_herd(df)
 
-    tweet = f"{partial_vax} parc. vacunados\n{full_vax} comp. vacunados\nInmunidad de rebaño (al 75%): {estimated_herd}"
+    tweet = f"{partial_vax} esq parcial\n{full_vax} esq completo\nFin de vac. (>= 12 años): {estimated_herd}"
 
     auth = get_auth()
     twitter_api = tweepy.API(auth)
@@ -102,6 +103,8 @@ def main(dry_run):
         last_date = df['date'].values[0]
         ts = (last_date - np.datetime64('1970-01-01T00:00:00')) / np.timedelta64(1, 's')
         logging.info(f'{datetime.utcfromtimestamp(ts)} Tweet out')
+    else:
+        twitter_api.update_status("No se han reportado datos nuevos para esta fecha. Ver https://twitter.com/progreso_vacuna para actualizaciones pasadas.")
     return
 
 if __name__ == '__main__':
