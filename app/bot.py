@@ -11,7 +11,7 @@ import pandas as pd
 from months import MONTHS_DICT
 
 DATA_SOURCE = "https://raw.githubusercontent.com/owid/covid-19-data/master/public/data/vaccinations/vaccinations.csv"
-BAR_CHARS = 18
+BAR_CHARS = 16
 # People over 12 years old (according to INE projected data for 2021)
 # NOTE: This number is still below the 75% threshold for herd immunity
 # It represents only ~71% of the population
