@@ -71,8 +71,8 @@ def get_estimated_herd(df: pd.DataFrame, by: float = .75):
         df -- A dataframe of 1 row with the necessary information to calculate the date
         by -- A float that represents at what percentage of the population herd immunity is reached
     """
-    daily_vaccs = df['daily_vaccinations'].mean()
     df = df.tail(1)
+    daily_vaccs = df['daily_vaccinations'].values[0]
     days_left = ((VAX_POP - df['people_vaccinated'].values[0] - df['people_fully_vaccinated'].values[0]) * 2 + df['people_vaccinated'].values[0]) // daily_vaccs
     estimated_date = datetime.now() + days_left * timedelta(days=1)
     est_str = estimated_date.strftime("%b %Y")
