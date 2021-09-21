@@ -100,11 +100,9 @@ def main(dry_run):
         return
     if should_tweet(df):
         twitter_api.update_status(tweet)
-        last_date = df['date'].values[0]
+        last_date = df['date'].values[-1]
         ts = (last_date - np.datetime64('1970-01-01T00:00:00')) / np.timedelta64(1, 's')
         logging.info(f'{datetime.utcfromtimestamp(ts)} Tweet out')
-    else:
-        twitter_api.update_status("No se han reportado datos nuevos para esta fecha. Ver https://twitter.com/progreso_vacuna para actualizaciones pasadas.")
     return
 
 if __name__ == '__main__':
