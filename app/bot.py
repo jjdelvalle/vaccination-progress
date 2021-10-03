@@ -89,7 +89,7 @@ def main(dry_run):
     full_vax = generate_bar(df['people_fully_vaccinated'].values[-1] / VAX_POP)
     estimated_herd = get_estimated_herd(df)
 
-    tweet = f"{partial_vax} esq parcial\n{full_vax} esq completo\nFin de vac. (>= 12 años): {estimated_herd}"
+    tweet = f"{partial_vax} esq parcial\n{full_vax} esq completo\nFin de vac. (≥ 12 años): {estimated_herd}"
 
     auth = get_auth()
     twitter_api = tweepy.API(auth)
