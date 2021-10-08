@@ -41,7 +41,7 @@ def generate_bar(percentage, n_chars = None):
        n_chars = BAR_CHARS
     num_filled = round(percentage*n_chars)
     num_empty = n_chars-num_filled
-    display_percentage = str(round(percentage*100, 2))
+    display_percentage = str(round(percentage*100, 1))
     msg = '{}{} {}%'.format('▓'*num_filled, '░'*num_empty, display_percentage)
     return msg
 
@@ -49,6 +49,8 @@ def get_data():
     df = pd.read_csv(DATA_SOURCE)
     df = df.query("iso_code == 'GTM'").copy()
     df['date'] = pd.to_datetime(df['date'])
+    df['vacc_change'] = df['people_vaccinated_per_hundred'].diff()
+    df['full_vacc_change'] = df['people_fully_vaccinated_per_hundred'].diff()
     return df.tail(14)
 
 def get_auth():
@@ -85,11 +87,13 @@ def get_estimated_herd(df: pd.DataFrame, by: float = .75):
 def main(dry_run):
     logging_setup()
     df = get_data()
-    partial_vax = generate_bar(df['people_vaccinated'].values[-1] / VAX_POP)
-    full_vax = generate_bar(df['people_fully_vaccinated'].values[-1] / VAX_POP)
+    partial_vax = generate_bar(df['people_vaccinated_per_hundred'].values[-1] / 100)
+    full_vax = generate_bar(df['people_fully_vaccinated_per_hundred'].values[-1] / 100)
+    change_vax = round(df['vacc_change'].values[-1], 2)
+    change_fully_vax = round(df['full_vacc_change'].values[-1], 2)
     estimated_herd = get_estimated_herd(df)
 
-    tweet = f"{partial_vax} esq parcial\n{full_vax} esq completo\nFin de vac. (≥ 12 años): {estimated_herd}"
+    tweet = f"{partial_vax} (+{change_vax}%) parcial\n{full_vax} (+{change_fully_vax}%) completa\nFin de vac. (≥ 12 años): {estimated_herd}"
 
     auth = get_auth()
     twitter_api = tweepy.API(auth)
