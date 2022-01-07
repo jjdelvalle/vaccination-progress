@@ -51,6 +51,7 @@ def get_data():
     df['date'] = pd.to_datetime(df['date'])
     df['vacc_change'] = df['people_vaccinated_per_hundred'].diff()
     df['full_vacc_change'] = df['people_fully_vaccinated_per_hundred'].diff()
+    df['booster_change'] = df['total_boosters_per_hundred'].diff()
     return df.tail(14)
 
 def get_auth():
@@ -89,11 +90,12 @@ def main(dry_run):
     df = get_data()
     partial_vax = generate_bar(df['people_vaccinated_per_hundred'].values[-1] / 100)
     full_vax = generate_bar(df['people_fully_vaccinated_per_hundred'].values[-1] / 100)
+    booster_bar = generate_bar(df['total_boosters_per_hundred'].values[-1] / 100)
     change_vax = round(df['vacc_change'].values[-1], 2)
     change_fully_vax = round(df['full_vacc_change'].values[-1], 2)
-    estimated_herd = get_estimated_herd(df)
+    change_booster = round(df['booster_change'].values[-1], 2)
 
-    tweet = f"{partial_vax} (+{change_vax}%) parcial\n{full_vax} (+{change_fully_vax}%) completa\nFin de vac. (≥ 12 años): {estimated_herd}"
+    tweet = f"{partial_vax} (+{change_vax}%) parcial\n{full_vax} (+{change_fully_vax}%) completa\n{booster_bar} (+{change_booster}%) refuerzo"
 
     auth = get_auth()
     twitter_api = tweepy.API(auth)
