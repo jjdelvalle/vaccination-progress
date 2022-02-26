@@ -91,11 +91,11 @@ def main(dry_run):
     partial_vax = generate_bar(df['people_vaccinated_per_hundred'].values[-1] / 100)
     full_vax = generate_bar(df['people_fully_vaccinated_per_hundred'].values[-1] / 100)
     booster_bar = generate_bar(df['total_boosters_per_hundred'].values[-1] / 100)
-    change_vax = round(df['vacc_change'].values[-1], 2)
-    change_fully_vax = round(df['full_vacc_change'].values[-1], 2)
-    change_booster = round(df['booster_change'].values[-1], 2)
+    change_vax = f"(+{round(df['vacc_change'].values[-1], 2)}%) " if not np.isnan(df['vacc_change'].values[-1]) else ""
+    change_fully_vax = f"(+{round(df['full_vacc_change'].values[-1], 2)}%) " if not np.isnan(df['full_vacc_change'].values[-1]) else ""
+    change_booster = f"(+{round(df['booster_change'].values[-1], 2)}%) "  if not np.isnan(df['booster_change'].values[-1]) else ""
 
-    tweet = f"{partial_vax} (+{change_vax}%) parcial\n{full_vax} (+{change_fully_vax}%) completa\n{booster_bar} (+{change_booster}%) refuerzo"
+    tweet = f"{partial_vax} {change_vax}parcial\n{full_vax} {change_fully_vax}completa\n{booster_bar} {change_booster}refuerzo"
 
     auth = get_auth()
     twitter_api = tweepy.API(auth)
